@@ -75,7 +75,7 @@ class SelectField extends Component {
           value={selectedItem.title}
           id='variants'
           ref='textField'
-          autoСomplete={false}
+          autoСomplete='off'
           fullWidth={true}
           onClick={this._openPopover.bind(this)}
           onFocus={this._handleFocus.bind(this)}

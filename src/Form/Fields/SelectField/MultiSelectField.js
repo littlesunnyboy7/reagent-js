@@ -116,6 +116,7 @@ class MultiSelectField extends Component {
             onFocus={ this.handleFocus }
             onBlur={ this.handleBlur }
             onDoubleClick={ this.handleOpen }
+            autoComplete='off'
             ref='input'
           />
           <SelectedItemList
