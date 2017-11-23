@@ -12,7 +12,8 @@ class MultiSelectField extends Component {
   constructor (props) {
     super (props)
     const { value, defaultValue } = props
-    const selectedItems = value || defaultValue || []
+    let selectedItems = value || defaultValue || []
+    if (!Array.isArray(selectedItems)) selectedItems = [selectedItems]
     this.state = {
       open: false,
       searchWords: '',
