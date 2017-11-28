@@ -106,14 +106,14 @@ class FormJson {
         }
       }
       case 'select': {
-        const { multiple, max } = field
-        if (multiple) {
+        const { modal, multiple } = field
+        if (modal) {
           let data = []
           const { children } = elements[`${fullName}[]`]
           for (let el of children) {
             data.push(el.value)
           }
-          if (max && max == 1)
+          if (!multiple)
             return data[0] ? data[0] : ''
           else 
             return data

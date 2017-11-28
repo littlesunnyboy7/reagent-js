@@ -8,7 +8,7 @@ import SelectedItemList from './SelectedItemList'
 
 import { getText } from '../../utils.js'
 
-class MultiSelectField extends Component {
+class ModalSelectField extends Component {
   constructor (props) {
     super (props)
     const { value, defaultValue } = props
@@ -41,9 +41,9 @@ class MultiSelectField extends Component {
 
   handleItemCheck = (e, isSelected) => {
     const { selectedItems } = this.state
-    const { max } = this.props
+    const { multiple } = this.props
     const { value } = e.target
-    if (max === 1) {
+    if (!multiple) {
       this.setState({ selectedItems: [value] })
     } else if ( isSelected ) {
       this.setState({selectedItems: selectedItems.concat(value)})
@@ -86,6 +86,7 @@ class MultiSelectField extends Component {
     )
     //const findedItems = searchWords == '' ? items : items.filter(({title}) => title.toLowerCase().includes(searchWords))
   }
+
   handleShowMore = () => {
     const { lastViewedIndex } = this.state
     if (lastViewedIndex < this.props.items.length) {
@@ -94,8 +95,8 @@ class MultiSelectField extends Component {
   }
 
   render () {
-    const { title, items, name, required, max } = this.props
-    const { MultiSelectField } = this.context
+    const { title, items, name, required, multiple } = this.props
+    const { ModalSelectField } = this.context
     const { searchWords, selectedItems, focused, open, lastViewedIndex } = this.state
     const filteredItems = this.filterItems(items, searchWords, selectedItems)
     return (
@@ -109,8 +110,8 @@ class MultiSelectField extends Component {
         />
         <div>
           <TextField
-            name='multiselect_input'
-            hintText={ getText(this.lang, MultiSelectField, 'text') }
+            name='modalselect_input'
+            hintText={ getText(this.lang, ModalSelectField, 'text') }
             fullWidth={ true }
             value=""
             onChange={ this.handleChange }
@@ -139,16 +140,17 @@ class MultiSelectField extends Component {
           onMore={this.handleShowMore}
           onSearch={this.handleSearch}
           onCheck={this.handleItemCheck}
-          max={ max }
+          multiple={ multiple }
         />
       </div>
     )
   }
 }
 
-MultiSelectField.contextTypes = {
-  MultiSelectField: PropTypes.shape({
+ModalSelectField.contextTypes = {
+  ModalSelectField: PropTypes.shape({
     text: PropTypes.string
   })
 };
-export default MultiSelectField
+
+export default ModalSelectField
