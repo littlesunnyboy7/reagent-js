@@ -85,7 +85,6 @@ const Field = (props) => {
           required={required}
           name={fieldName}
           value={value}
-          defaultValue={defaultValue}
         />
       )
     }
