@@ -13,13 +13,14 @@ import MultiSelectField from './SelectField/MultiSelectField'
 import ArrayField from './ArrayField'
 import AddressField from './AddressField'
 import TimeRange from './TimeRange'
+import FIAS from './FIAS'
 
 import { getFullFieldName } from '../utils'
 const Field = (props) => {
   const {name, field, parentName, value, defaultValue, required} = props
   const {type} = field
   //const fieldValue = name ? value[name] : value
-  const fieldName = getFullFieldName(props)  
+  const fieldName = getFullFieldName(props)
   switch (type) {
     case 'html': {
       return (
@@ -153,6 +154,14 @@ const Field = (props) => {
           required={required}
           name={fieldName}
           value={value}
+        />
+      )
+    }
+
+    case 'fias': {
+      return (
+        <FIAS
+          key={fieldName}
         />
       )
     }

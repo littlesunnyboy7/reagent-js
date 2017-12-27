@@ -54,6 +54,10 @@ class App extends Component {
               title: 'test',
               multiple: true,
               items
+            },
+            fias: {
+              type: 'fias',
+              title: 'FIAS'
             }
           }
         }}
