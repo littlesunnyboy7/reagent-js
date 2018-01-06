@@ -63,14 +63,16 @@ class ModalSelectField extends Component {
 
   validation = () => {
     const { selectedItems } = this.state
-    const { min, max } = this.props
+    const { min, max, required } = this.props
     const { input } = this.refs
     const node = input.getInputNode()
     //console.log('[MULTISELECT FIELD] validation', selectedItems, min, max);
     if (min && selectedItems.length < min) {
-      node.setCustomValidity(`Должно быть выбрано более ${min} элементов`)
+      node.setCustomValidity(`Должно быть выбрано количество элементов большее, либо равное ${min}`)
     } else if (max && selectedItems.length > max) {
-      node.setCustomValidity(`Должно быть выбрано менее ${max} элементов`)
+      node.setCustomValidity(`Должно быть выбрано количество элементов меньшее, либо равное ${max}`)
+    } else if (required && !selectedItems.length) {
+      node.setCustomValidity('Пожалуйста, заполните это поле.')
     } else {
       node.setCustomValidity('')
     }
