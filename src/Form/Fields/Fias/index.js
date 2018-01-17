@@ -4,29 +4,33 @@ import {List, ListItem} from 'material-ui/List';
 import Paper from 'material-ui/Paper';
 import Spiner from './Spiner';
 
-import './Spiner/style.less'
+import './style.less'
 
-class FIAS extends Component {
-  state = {
-    address_is_selected: false,
-    load: false,
-    addr_obj: {},
-    addresses: [],
-    houses: []
-  }
+class Fias extends Component {
+  constructor(props) {
+    super(props)
+    const { value } = props;
 
-  _style = () => {
-    return {
-      minWidth: '60%',
-      zIndex: 2,
-      position: 'absolute',
+    this.state = {
+      house_is_selected: false,
+      load: false,
+      addr_obj: {},
+      addresses: [],
+      houses: [],
+      text_value: value ? value.text : '',
+      display: 'none'
     }
   }
 
-  _handleLoadHouses = (aoguid) => {
+  _hideAddressDropdown = () => this.setState({ display: 'none', address_is_selected: false })
+
+  _handleLoadHouses = (addr) => {
+    const { houses_url } = this.props;
     const self = this
-    self.setState({ load: true })
-    fetch(`http://fiasco.dev.it.vm/lookup/get_houses_and_obj?lookup=${aoguid}`)
+
+    self.setState({ load: true, text_value: addr.title })
+
+    fetch(`${houses_url}${addr.aoguid}`)
       .then(response => response.json())
       .then(json => {
         self.setState({
@@ -39,40 +43,80 @@ class FIAS extends Component {
   }
 
   _handleHouseSelect = (house_obj) => {
-    this.setState({
-      addr_obj: Object.assign(this.state.addr_obj, house_obj)
-    })
+    let str = this.state.text_value;
+    str += `, дом ${house_obj.house}${ house_obj.build ? `, корпус ` : '' }`
 
-    console.log('-----', this.state)
+    this.setState({
+      addr_obj: Object.assign(this.state.addr_obj, house_obj),
+      text_value: str,
+      display: 'none',
+      house_is_selected: true
+    })
   }
 
-  _handleKeyUp = (e) => {
+  _handleChange = (e) => {
+    const { addresses_url } = this.props;
     const value = e.target.value
     const self = this
 
-    if (this.state.address_is_selected) {
-      console.log('asd');
+    this.setState({ text_value: value })
+
+    if (this.state.house_is_selected) {
+      const arr = value.split(',')
+      this.setState({
+        addr_obj: Object.assign(this.state.addr_obj, { flat: arr[arr.length - 1].replace(/\s/g, '') })
+      })
     } else {
       self.setState({ load: true })
-      fetch(`http://fiasco.dev.it.vm/lookup?lookup=${value}`)
+      fetch(`${addresses_url}${value}`)
         .then(response => response.json())
         .then(addresses => {
           self._cleanState()
-          self.setState({ addresses, load: false })
+          self.setState({ addresses, load: false, display: 'block' })
         })
+    }
+
+    if (value.length == 0) {
+      this._cleanState()
     }
   }
 
-  _cleanState = () => this.setState({ addresses: [], load: false })
+  _cleanState = () => this.setState({
+    house_is_selected: false,
+    addresses: [],
+    load: false,
+    addr_obj: {},
+    houses: [] ,
+    display: 'none'
+  })
 
   render() {
+    const { title, required, name } = this.props;
     return (
       <div>
-        <TextField
-          onKeyUp={this._handleKeyUp}
+        <input
+          key={name}
+          type='hidden'
+          name={name}
+          value={JSON.stringify(this.state)}
         />
-        <div style={this._style()}>
-        <Paper style={ { maxHeight: 500, overflowY: 'scroll' } }>
+        <TextField
+          floatingLabelText={title}
+          style={ { zIndex: 3 } }
+          onChange={this._handleChange}
+          required={required}
+          value={ this.state.text_value }
+          fullWidth={true}
+        />
+        <div
+          className='c-fiac__paper-background'
+          style={{display: this.state.display}}
+          onClick={() => this._hideAddressDropdown()}
+        ></div>
+        <Paper
+          className='c-fiac__paper'
+          style={{display: this.state.display}}
+        >
           {
             this.state.load ? (
               <Spiner />
@@ -80,19 +124,18 @@ class FIAS extends Component {
               <List>
                 {
                   this.state.houses.length > 0 ? (
-                    this.state.houses.map((house, index) => <ListItem key={index} onClick={() =>this._handleHouseSelect(house)} primaryText={house.house} />)
+                    this.state.houses.map((house, index) => <ListItem key={index} onClick={() =>this._handleHouseSelect(house)} primaryText={`Дом ${house.house} ${ house.build ? `, корпус ${house.build}`  : '' }`} />)
                   ) : (
-                    this.state.addresses.map((address, index) => <ListItem key={index} onClick={() =>this._handleLoadHouses(address.aoguid)} primaryText={address.title} />)
+                    this.state.addresses.map((address, index) => <ListItem key={index} onClick={() =>this._handleLoadHouses(address)} primaryText={address.title} />)
                   )
                 }
               </List>
             )
           }
         </Paper>
-        </div>
       </div>
     )
   }
 }
 
-export default FIAS;
+export default Fias;

@@ -57,10 +57,23 @@ class App extends Component {
             },
             fias: {
               type: 'fias',
-              title: 'FIAS',
-              url_to_search: 'url_to_search'
+              title: 'Адрес',
+              addresses_url: 'http://fiasco.dev.it.vm/lookup?lookup=',
+              houses_url: 'http://fiasco.dev.it.vm/lookup/get_houses_and_obj?lookup=',
+              value: {
+                address: {
+                  build: null,
+                  city: "Сыктывкар",
+                  house: "28/1",
+                  region: "Коми",
+                  settlement: "Эжвинский",
+                  street: "Мира"
+                },
+                text: 'Респ Коми, г Сыктывкар, р-н Эжвинский, ул Мира'
+              }
             }
-          }
+          },
+          //required: ['fias', 'text']
         }}
         onSubmit={data => console.log('res:', data)}
       />
