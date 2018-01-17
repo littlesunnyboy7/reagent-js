@@ -43,7 +43,17 @@ class Fias extends Component {
 
   _handleHouseSelect = (house_obj) => {
     let str = this.state.text_value;
-    str += `, дом ${house_obj.house}${ house_obj.building ? `, корпус house_obj.building` : '' }`
+    const arr = new Array();
+
+    if (house_obj.house) {
+      arr.push(`, дом ${house_obj.house}`)
+    }
+
+    if (house_obj.building) {
+      arr.push(`, корпус ${house_obj.building}`)
+    }
+
+    str += arr.join('')
 
     this.setState({
       addr_obj: Object.assign(this.state.addr_obj, house_obj),
@@ -123,7 +133,7 @@ class Fias extends Component {
               <List>
                 {
                   this.state.houses.length > 0 ? (
-                    this.state.houses.map((house, index) => <ListItem key={index} onClick={() =>this._handleHouseSelect(house)} primaryText={`Дом ${house.house} ${ house.building ? `, корпус ${house.building}`  : '' }`} />)
+                    this.state.houses.map((house, index) => <ListItem key={index} onClick={() =>this._handleHouseSelect(house)} primaryText={`${house.house ? `Дом ${house.house}` : ''} ${ house.building ? ` корпус ${house.building}`  : '' }`} />)
                   ) : (
                     this.state.addresses.map((address, index) => <ListItem key={index} onClick={() =>this._handleLoadHouses(address)} primaryText={address.title} />)
                   )
