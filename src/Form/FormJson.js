@@ -154,6 +154,10 @@ class FormJson {
           return null
         }
       }
+      case 'fias': {
+        console.log('getFieldData', field, fieldName, parentName);
+        return null;
+      }
       default:
         if (!elements[fullName]) throw new Error(`Не найден элемент с именем ${fullName} из схемы ${JSON.stringify(field)}`)
         return elements[fullName].value //&& elements[fullName].value != '' ? elements[fullName].value : null

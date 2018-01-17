@@ -13,7 +13,7 @@ import MultiSelectField from './SelectField/MultiSelectField'
 import ArrayField from './ArrayField'
 import AddressField from './AddressField'
 import TimeRange from './TimeRange'
-import FIAS from './FIAS'
+import Fias from './Fias'
 
 import { getFullFieldName } from '../utils'
 const Field = (props) => {
@@ -160,8 +160,12 @@ const Field = (props) => {
 
     case 'fias': {
       return (
-        <FIAS
+        <Fias
           key={fieldName}
+          {...field}
+          required={required}
+          name={fieldName}
+          value={value}
         />
       )
     }

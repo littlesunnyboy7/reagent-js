@@ -57,7 +57,8 @@ class App extends Component {
             },
             fias: {
               type: 'fias',
-              title: 'FIAS'
+              title: 'FIAS',
+              url_to_search: 'url_to_search'
             }
           }
         }}
