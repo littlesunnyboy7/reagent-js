@@ -4,6 +4,8 @@ import {List, ListItem} from 'material-ui/List';
 import Paper from 'material-ui/Paper';
 import Spiner from './Spiner';
 
+import { fetchAddresses, fetchHouses } from './fetch_data'
+
 import './style.less'
 
 class Fias extends Component {
@@ -26,19 +28,8 @@ class Fias extends Component {
 
   _handleLoadHouses = (addr) => {
     const { houses_url } = this.props;
-    const self = this
-
-    self.setState({ load: true, text_value: addr.title })
-
-    fetch(`${houses_url}${addr.aoguid}`)
-      .then(response => response.json())
-      .then(json => {
-        self.setState({
-          addr_obj: json.addr_obj,
-          houses: json.houses,
-          load: false
-        })
-      })
+    this.setState({ load: true, text_value: addr.title })
+    fetchHouses(this, houses_url, addr.aoguid)
   }
 
   _handleHouseSelect = (house_obj) => {
@@ -66,7 +57,6 @@ class Fias extends Component {
   _handleChange = (e) => {
     const { addresses_url } = this.props;
     const value = e.target.value
-    const self = this
 
     this.setState({ text_value: value })
 
@@ -76,13 +66,8 @@ class Fias extends Component {
         addr_obj: Object.assign(this.state.addr_obj, { flat: arr[arr.length - 1].replace(/\s/g, '') })
       })
     } else {
-      self.setState({ load: true })
-      fetch(`${addresses_url}${value}`)
-        .then(response => response.json())
-        .then(addresses => {
-          self._cleanState()
-          self.setState({ addresses, load: false, display: 'block' })
-        })
+      this.setState({ load: true })
+      fetchAddresses(this, addresses_url, value)
     }
 
     if (value.length == 0) {
@@ -145,6 +130,16 @@ class Fias extends Component {
       </div>
     )
   }
+}
+
+Fias.propTypes = {
+  title: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  addresses_url: PropTypes.string.isRequired,
+  houses_url: PropTypes.string.isRequired,
+  value: PropTypes.object,
+  required: PropTypes.bool,
+
 }
 
 export default Fias;
