@@ -15,7 +15,7 @@ class Fias extends Component {
 
     this.state = {
       houseIsSelected: false,
-      load: false,
+      isLoading: false,
       addrObj: {},
       addresses: [],
       houses: [],
@@ -24,30 +24,25 @@ class Fias extends Component {
     }
   }
 
-  _data = () => {
-    return {
-      address: this.state.addrObj,
-      text: this.state.textValue
-    }
-  }
+  _data = () => ({ address: this.state.addrObj, text: this.state.textValue })
 
   _hideAddressDropdown = () => this.setState({ isVisible: false })
 
   _handleLoadHouses = (addr) => {
     const { housesUrl } = this.props;
-    this.setState({ load: true, textValue: addr.title })
+    this.setState({ isLoading: true, textValue: addr.title })
     fetchHouses(housesUrl, addr.aoguid)
       .then(json => {
         if (json.error) {
           this.setState({
             houses: json,
-            load: false
+            isLoading: false
           })
         } else {
           this.setState({
             addrObj: json.addr_obj,
             houses: json.houses,
-            load: false
+            isLoading: false
           })
         }
       })
@@ -93,11 +88,11 @@ class Fias extends Component {
     if (this.state.houseIsSelected) {
       this._ejectAppartmentFromAddressString(value)
     } else {
-      this.setState({ load: true })
+      this.setState({ isLoading: true })
       fetchAddresses(addressesUrl, value)
         .then(addresses => {
           this._cleanState()
-          this.setState({ addresses, load: false, isVisible: true })
+          this.setState({ addresses, isLoading: false, isVisible: true })
         })
     }
 
@@ -109,7 +104,7 @@ class Fias extends Component {
   _cleanState = () => this.setState({
     houseIsSelected: false,
     addresses: [],
-    load: false,
+    isLoading: false,
     addrObj: {},
     houses: [] ,
     isVisible: false
@@ -150,7 +145,7 @@ class Fias extends Component {
 
   render() {
     const { title, required, name } = this.props;
-    const { isVisible } = this.state;
+    const { isVisible, isLoading } = this.state;
 
     return (
       <div>
@@ -179,7 +174,7 @@ class Fias extends Component {
                 className='c-fiac__paper'
               >
                 {
-                  this.state.load ? (
+                  isLoading ? (
                     <Spiner />
                   ) : ( this._listItems() )
                 }
