@@ -58,8 +58,8 @@ class App extends Component {
             fias: {
               type: 'fias',
               title: 'Адрес',
-              addresses_url: 'http://fiasco.dev.it.vm/lookup?lookup=',
-              houses_url: 'http://fiasco.dev.it.vm/lookup/get_houses_and_obj?lookup=',
+              addressesUrl: 'http://fiasco.dev.it.vm/lookup?lookup=',
+              housesUrl: 'http://fiasco.dev.it.vm/lookup/get_houses_and_obj?lookup=',
               value: {
                 address: {
                   build: null,

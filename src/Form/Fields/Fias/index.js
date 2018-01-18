@@ -34,9 +34,9 @@ class Fias extends Component {
   _hideAddressDropdown = () => this.setState({ isVisible: false })
 
   _handleLoadHouses = (addr) => {
-    const { houses_url } = this.props;
+    const { housesUrl } = this.props;
     this.setState({ load: true, textValue: addr.title })
-    fetchHouses(houses_url, addr.aoguid)
+    fetchHouses(housesUrl, addr.aoguid)
       .then(json => {
         if (json.error) {
           this.setState({
@@ -85,7 +85,7 @@ class Fias extends Component {
   }
 
   _handleChange = (e) => {
-    const { addresses_url } = this.props;
+    const { addressesUrl } = this.props;
     const value = e.target.value
 
     this.setState({ textValue: value })
@@ -94,7 +94,7 @@ class Fias extends Component {
       this._ejectAppartmentFromAddressString(value)
     } else {
       this.setState({ load: true })
-      fetchAddresses(addresses_url, value)
+      fetchAddresses(addressesUrl, value)
         .then(addresses => {
           this._cleanState()
           this.setState({ addresses, load: false, isVisible: true })
@@ -195,8 +195,8 @@ class Fias extends Component {
 Fias.propTypes = {
   title: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  addresses_url: PropTypes.string.isRequired,
-  houses_url: PropTypes.string.isRequired,
+  addressesUrl: PropTypes.string.isRequired,
+  housesUrl: PropTypes.string.isRequired,
   value: PropTypes.object,
   required: PropTypes.bool
 }
