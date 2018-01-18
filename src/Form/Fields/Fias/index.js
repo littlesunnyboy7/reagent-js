@@ -53,21 +53,21 @@ class Fias extends Component {
       })
   }
 
-  _handleHouseSelect = (house_obj) => {
+  _handleHouseSelect = (houseObj) => {
     let str = this.state.textValue;
     const arr = new Array();
 
-    if (house_obj.house) {
-      arr.push(`, дом ${house_obj.house}`)
+    if (houseObj.house) {
+      arr.push(`, дом ${houseObj.house}`)
     }
 
-    if (house_obj.building) {
-      arr.push(`, корпус ${house_obj.building}`)
+    if (houseObj.building) {
+      arr.push(`, корпус ${houseObj.building}`)
     }
 
     str += arr.join('')
     this.setState({
-      addrObj: { ...this.state.addrObj, ...house_obj },
+      addrObj: { ...this.state.addrObj, ...houseObj },
       textValue: str,
       isVisible: false,
       houseIsSelected: true
