@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react'
 import TextField from 'material-ui/TextField'
-import {List, ListItem} from 'material-ui/List';
+import {ListItem} from 'material-ui/List';
 import Paper from 'material-ui/Paper';
 import Spiner from './Spiner';
 
@@ -14,26 +14,47 @@ class Fias extends Component {
     const { value } = props;
 
     this.state = {
-      house_is_selected: false,
+      houseIsSelected: false,
       load: false,
-      addr_obj: {},
+      addrObj: {},
       addresses: [],
       houses: [],
-      text_value: value ? value.text : '',
-      display: 'none'
+      textValue: value ? value.text : '',
+      isVisible: false
     }
   }
 
-  _hideAddressDropdown = () => this.setState({ display: 'none', address_is_selected: false })
+  _data = () => {
+    return {
+      address: this.state.addrObj,
+      text: this.state.textValue
+    }
+  }
+
+  _hideAddressDropdown = () => this.setState({ isVisible: false })
 
   _handleLoadHouses = (addr) => {
     const { houses_url } = this.props;
-    this.setState({ load: true, text_value: addr.title })
-    fetchHouses(this, houses_url, addr.aoguid)
+    this.setState({ load: true, textValue: addr.title })
+    fetchHouses(houses_url, addr.aoguid)
+      .then(json => {
+        if (json.error) {
+          this.setState({
+            houses: json,
+            load: false
+          })
+        } else {
+          this.setState({
+            addrObj: json.addr_obj,
+            houses: json.houses,
+            load: false
+          })
+        }
+      })
   }
 
   _handleHouseSelect = (house_obj) => {
-    let str = this.state.text_value;
+    let str = this.state.textValue;
     const arr = new Array();
 
     if (house_obj.house) {
@@ -45,29 +66,39 @@ class Fias extends Component {
     }
 
     str += arr.join('')
-
     this.setState({
-      addr_obj: Object.assign(this.state.addr_obj, house_obj),
-      text_value: str,
-      display: 'none',
-      house_is_selected: true
+      addrObj: { ...this.state.addrObj, ...house_obj },
+      textValue: str,
+      isVisible: false,
+      houseIsSelected: true
     })
+  }
+
+  _ejectAppartmentFromAddressString = (value) => {
+    const arr = value.split(',')
+      this.setState({
+        addrObj: {
+          ...this.state.addrObj,
+          appartment: arr[arr.length - 1].replace(/\s/g, '')
+        }
+      })
   }
 
   _handleChange = (e) => {
     const { addresses_url } = this.props;
     const value = e.target.value
 
-    this.setState({ text_value: value })
+    this.setState({ textValue: value })
 
-    if (this.state.house_is_selected) {
-      const arr = value.split(',')
-      this.setState({
-        addr_obj: Object.assign(this.state.addr_obj, { flat: arr[arr.length - 1].replace(/\s/g, '') })
-      })
+    if (this.state.houseIsSelected) {
+      this._ejectAppartmentFromAddressString(value)
     } else {
       this.setState({ load: true })
-      fetchAddresses(this, addresses_url, value)
+      fetchAddresses(addresses_url, value)
+        .then(addresses => {
+          this._cleanState()
+          this.setState({ addresses, load: false, isVisible: true })
+        })
     }
 
     if (value.length == 0) {
@@ -76,57 +107,86 @@ class Fias extends Component {
   }
 
   _cleanState = () => this.setState({
-    house_is_selected: false,
+    houseIsSelected: false,
     addresses: [],
     load: false,
-    addr_obj: {},
+    addrObj: {},
     houses: [] ,
-    display: 'none'
+    isVisible: false
   })
+
+  _listItems = () => {
+    const { addresses, houses } = this.state
+    const items = new Array()
+
+    if (addresses.error || houses.error) {
+      return <ListItem disabled={true} primaryText={`${addresses.error || houses.error}`} />
+    }
+
+    if (houses.length > 0) {
+      houses.map((house, index) => {
+        items.push(
+          <ListItem
+            key={index}
+            onClick={() =>this._handleHouseSelect(house)}
+            primaryText={`${house.house ? `Дом ${house.house}` : ''} ${ house.building ? ` корпус ${house.building}`  : '' }`}
+          />
+        )
+      })
+    } else {
+      addresses.map((address, index) => {
+        items.push(
+          <ListItem
+            key={index}
+            onClick={() =>this._handleLoadHouses(address)}
+            primaryText={address.title}
+          />
+        )
+      })
+    }
+
+    return items
+  }
 
   render() {
     const { title, required, name } = this.props;
+    const { isVisible } = this.state;
+
     return (
       <div>
         <input
           key={name}
           type='hidden'
           name={name}
-          value={JSON.stringify(this.state)}
+          value={JSON.stringify(this._data())}
         />
         <TextField
           floatingLabelText={title}
           style={ { zIndex: 3 } }
           onChange={this._handleChange}
           required={required}
-          value={ this.state.text_value }
+          value={ this.state.textValue }
           fullWidth={true}
         />
-        <div
-          className='c-fiac__paper-background'
-          style={{display: this.state.display}}
-          onClick={() => this._hideAddressDropdown()}
-        ></div>
-        <Paper
-          className='c-fiac__paper'
-          style={{display: this.state.display}}
-        >
-          {
-            this.state.load ? (
-              <Spiner />
-            ) : (
-              <List>
+        {
+          isVisible && (
+            <div>
+              <div
+                className='c-fiac__paper-background'
+                onClick={() => this._hideAddressDropdown()}
+              ></div>
+              <Paper
+                className='c-fiac__paper'
+              >
                 {
-                  this.state.houses.length > 0 ? (
-                    this.state.houses.map((house, index) => <ListItem key={index} onClick={() =>this._handleHouseSelect(house)} primaryText={`${house.house ? `Дом ${house.house}` : ''} ${ house.building ? ` корпус ${house.building}`  : '' }`} />)
-                  ) : (
-                    this.state.addresses.map((address, index) => <ListItem key={index} onClick={() =>this._handleLoadHouses(address)} primaryText={address.title} />)
-                  )
+                  this.state.load ? (
+                    <Spiner />
+                  ) : ( this._listItems() )
                 }
-              </List>
-            )
-          }
-        </Paper>
+              </Paper>
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -138,8 +198,7 @@ Fias.propTypes = {
   addresses_url: PropTypes.string.isRequired,
   houses_url: PropTypes.string.isRequired,
   value: PropTypes.object,
-  required: PropTypes.bool,
-
+  required: PropTypes.bool
 }
 
 export default Fias;

@@ -1,20 +1,11 @@
-export function fetchAddresses(context, url, query) {
-  fetch(`${url}${query}`)
-    .then(response => response.json())
-    .then(addresses => {
-      context._cleanState()
-      context.setState({ addresses, load: false, display: 'block' })
-    })
+export function fetchAddresses(url, query) {
+  return fetch(`${url}${query}`)
+           .then(response => response.json())
+           .catch(() => { return { error: 'Ошибка получения адресов' } })
 }
 
-export function fetchHouses(context, url, id) {
-  fetch(`${url}${id}`)
-      .then(response => response.json())
-      .then(json => {
-        context.setState({
-          addr_obj: json.addr_obj,
-          houses: json.houses,
-          load: false
-        })
-      })
+export function fetchHouses(url, id) {
+  return fetch(`${url}${id}`)
+           .then(response => response.json())
+           .catch(() => { return { error: 'Ошибка получения номеров домов' } })
 }
