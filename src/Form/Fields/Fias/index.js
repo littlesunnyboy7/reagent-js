@@ -7,6 +7,7 @@ import SocialLocationCity from 'material-ui/svg-icons/social/location-city'
 import Spiner from './Spiner';
 
 import { fetchAddresses, fetchHouses } from './fetch_data'
+import { MODES } from './constants'
 
 import './style.less'
 
@@ -16,7 +17,7 @@ class Fias extends Component {
     const { value } = props;
 
     this.state = {
-      houseIsSelected: false,
+      mode: MODES[0],
       isLoading: false,
       addrObj: {},
       addresses: [],
@@ -37,14 +38,19 @@ class Fias extends Component {
     this.setState({ isLoading: true, textValue: addr.title })
     fetchHouses(housesUrl, addr.aoguid)
       .then(json => {
-        this._cleanState()
         if (json.error) {
-          this.setState({ fetchingError: json.error, isVisible: true })
+          this.setState({
+            fetchingError: json.error,
+            isVisible: true,
+            isLoading: false
+          })
         } else {
           this.setState({
             addrObj: json.addr_obj,
             houses: json.houses,
-            isVisible: true
+            isVisible: true,
+            isLoading: false,
+            mode: MODES[1]
           })
         }
 
@@ -68,7 +74,7 @@ class Fias extends Component {
       addrObj: { ...this.state.addrObj, ...houseObj },
       textValue: str,
       isVisible: false,
-      houseIsSelected: true
+      mode: MODES[2]
     })
   }
 
@@ -88,47 +94,42 @@ class Fias extends Component {
 
     this.setState({ textValue: value })
 
-    if (this.state.houseIsSelected) {
+    if (this.state.mode === MODES[2]) {
       this._ejectAppartmentFromAddressString(value)
     } else {
       this.setState({ isLoading: true })
       fetchAddresses(addressesUrl, value)
         .then(addresses => {
-          this._cleanState()
           if (addresses.error) {
-            this.setState({ fetchingError: addresses.error, isVisible: true })
+            this.setState({
+              fetchingError: addresses.error,
+              isVisible: true,
+              isLoading: false
+            })
           } else {
-            this.setState({ addresses, isVisible: true })
+            this.setState({
+              addresses,
+              isVisible: true,
+              isLoading: false
+            })
           }
         })
     }
 
     if (value.length == 0) {
-      this._cleanState()
+      this.setState({ mode: MODES[0] })
     }
   }
 
-  _cleanState = () => this.setState({
-    houseIsSelected: false,
-    addresses: [],
-    isLoading: false,
-    addrObj: {},
-    houses: [] ,
-    isVisible: false,
-    fetchingError: null
-  })
-
-  _openAddressDialog = () => this.setState({ openAddressDialog: true })
-
   _listItems = () => {
-    const { addresses, houses, fetchingError } = this.state
+    const { addresses, houses, fetchingError, mode } = this.state
     const items = new Array()
 
     if (fetchingError) {
       return <ListItem disabled={true} primaryText={`${fetchingError}`} />
     }
 
-    if (houses.length > 0) {
+    if (houses.length > 0 && mode === MODES[1]) {
       houses.map((house, index) => {
         items.push(
           <ListItem
