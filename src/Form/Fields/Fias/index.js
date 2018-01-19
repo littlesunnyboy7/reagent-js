@@ -1,7 +1,9 @@
 import React, { PropTypes, Component } from 'react'
 import TextField from 'material-ui/TextField'
-import {ListItem} from 'material-ui/List';
+import {List, ListItem} from 'material-ui/List';
 import Paper from 'material-ui/Paper';
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import SocialLocationCity from 'material-ui/svg-icons/social/location-city'
 import Spiner from './Spiner';
 
 import { fetchAddresses, fetchHouses } from './fetch_data'
@@ -21,7 +23,8 @@ class Fias extends Component {
       houses: [],
       textValue: value ? value.text : '',
       isVisible: false,
-      fetchingError: null
+      fetchingError: null,
+      openAddressDialog: false
     }
   }
 
@@ -115,6 +118,8 @@ class Fias extends Component {
     fetchingError: null
   })
 
+  _openAddressDialog = () => this.setState({ openAddressDialog: true })
+
   _listItems = () => {
     const { addresses, houses, fetchingError } = this.state
     const items = new Array()
@@ -145,8 +150,26 @@ class Fias extends Component {
       })
     }
 
+    if (addresses.length == 0) {
+      items.push(
+        <ListItem
+          disabled={true}
+          primaryText='Адрес отсутствует в базе ФИАС. Нажмите кнопку и введите адрес вручную'
+          rightAvatar={this._openAddressDialogButton()} />
+      )
+    }
+
     return items
   }
+
+  _openAddressDialogButton = () => (<FloatingActionButton
+    mini={true}
+    onClick={this._openAddressDialog}
+    secondary={true}
+    tabIndex={-1}
+    >
+    <SocialLocationCity/>
+  </FloatingActionButton>)
 
   render() {
     const { title, required, name } = this.props;
@@ -181,7 +204,7 @@ class Fias extends Component {
                 {
                   isLoading ? (
                     <Spiner />
-                  ) : ( this._listItems() )
+                  ) : ( <List>{this._listItems()}</List> )
                 }
               </Paper>
             </div>
