@@ -20,7 +20,8 @@ class Fias extends Component {
       addresses: [],
       houses: [],
       textValue: value ? value.text : '',
-      isVisible: false
+      isVisible: false,
+      fetchingError: null
     }
   }
 
@@ -33,18 +34,17 @@ class Fias extends Component {
     this.setState({ isLoading: true, textValue: addr.title })
     fetchHouses(housesUrl, addr.aoguid)
       .then(json => {
+        this._cleanState()
         if (json.error) {
-          this.setState({
-            houses: json,
-            isLoading: false
-          })
+          this.setState({ fetchingError: json.error, isVisible: true })
         } else {
           this.setState({
             addrObj: json.addr_obj,
             houses: json.houses,
-            isLoading: false
+            isVisible: true
           })
         }
+
       })
   }
 
@@ -92,7 +92,11 @@ class Fias extends Component {
       fetchAddresses(addressesUrl, value)
         .then(addresses => {
           this._cleanState()
-          this.setState({ addresses, isLoading: false, isVisible: true })
+          if (addresses.error) {
+            this.setState({ fetchingError: addresses.error, isVisible: true })
+          } else {
+            this.setState({ addresses, isVisible: true })
+          }
         })
     }
 
@@ -107,15 +111,16 @@ class Fias extends Component {
     isLoading: false,
     addrObj: {},
     houses: [] ,
-    isVisible: false
+    isVisible: false,
+    fetchingError: null
   })
 
   _listItems = () => {
-    const { addresses, houses } = this.state
+    const { addresses, houses, fetchingError } = this.state
     const items = new Array()
 
-    if (addresses.error || houses.error) {
-      return <ListItem disabled={true} primaryText={`${addresses.error || houses.error}`} />
+    if (fetchingError) {
+      return <ListItem disabled={true} primaryText={`${fetchingError}`} />
     }
 
     if (houses.length > 0) {
