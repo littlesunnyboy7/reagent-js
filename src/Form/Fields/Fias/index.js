@@ -17,7 +17,7 @@ class Fias extends Component {
     const { value } = props;
 
     this.state = {
-      mode: MODES[0],
+      mode: MODES.SELECTING_ADDRESS,
       isLoading: false,
       addrObj: {},
       addresses: [],
@@ -50,7 +50,7 @@ class Fias extends Component {
             houses: json.houses,
             isVisible: true,
             isLoading: false,
-            mode: MODES[1]
+            mode: MODES.SELECTING_HOUSE
           })
         }
 
@@ -74,7 +74,7 @@ class Fias extends Component {
       addrObj: { ...this.state.addrObj, ...houseObj },
       textValue: str,
       isVisible: false,
-      mode: MODES[2]
+      mode: MODES.SELECTING_APPARTMENT
     })
   }
 
@@ -94,7 +94,7 @@ class Fias extends Component {
 
     this.setState({ textValue: value })
 
-    if (this.state.mode === MODES[2]) {
+    if (this.state.mode === MODES.SELECTING_APPARTMENT) {
       this._ejectAppartmentFromAddressString(value)
     } else {
       this.setState({ isLoading: true })
@@ -117,7 +117,7 @@ class Fias extends Component {
     }
 
     if (value.length == 0) {
-      this.setState({ mode: MODES[0] })
+      this.setState({ mode: MODES.SELECTING_ADDRESS })
     }
   }
 
@@ -131,7 +131,7 @@ class Fias extends Component {
       return <ListItem disabled={true} primaryText={`${fetchingError}`} />
     }
 
-    if (houses.length > 0 && mode === MODES[1]) {
+    if (houses.length > 0 && mode === MODES.SELECTING_HOUSE) {
       houses.map((house, index) => {
         items.push(
           <ListItem
