@@ -114,8 +114,8 @@ class FormJson {
             data.push(el.value)
           }
           if (!multiple)
-            return data[0] ? data[0] : ''
-          else 
+            return data[0] || ''
+          else
             return data
         } else {
           return elements[fullName].value

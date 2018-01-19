@@ -13,7 +13,9 @@ class ModalSelectField extends Component {
     super (props)
     const { value, defaultValue } = props
     let selectedItems = value || defaultValue || []
-    if (!Array.isArray(selectedItems)) selectedItems = [selectedItems]
+    if (!Array.isArray(selectedItems)) {
+      selectedItems = [selectedItems]
+    }
     this.state = {
       open: false,
       searchWords: '',
