@@ -154,6 +154,10 @@ class FormJson {
           return null
         }
       }
+      case 'fias': {
+        const obj = JSON.parse(elements.namedItem(fullName).value)
+        return { address: obj.address, text: obj.text };
+      }
       default:
         if (!elements[fullName]) throw new Error(`Не найден элемент с именем ${fullName} из схемы ${JSON.stringify(field)}`)
         return elements[fullName].value //&& elements[fullName].value != '' ? elements[fullName].value : null

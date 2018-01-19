@@ -16,6 +16,7 @@ import ObjectField2 from './Fields/ObjectField'
 import RadioField2 from './Fields/RadioField'
 import ToggleField2 from './Fields/ToggleField'
 import DateField2 from './Fields/DateField'
+import Fias2 from './Fields/Fias'
 
 class Form extends Component {
   constructor(props){
@@ -106,5 +107,6 @@ export {
   ObjectField2 as ObjectField,
   RadioField2 as RadioField,
   ToggleField2 as ToggleField,
-  DateField2 as DateField
+  DateField2 as DateField,
+  Fias2 as Fias
 }
