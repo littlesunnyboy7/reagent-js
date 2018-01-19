@@ -46,7 +46,7 @@ class ItemListWithFilter extends React.Component {
   }
 
   render() {
-    const {title, open, items, selectedItems, searchWords, onClose, onSearch, onCheck, max} = this.props
+    const {title, open, items, selectedItems, searchWords, onClose, onSearch, onCheck, multiple} = this.props
     const format = getText.bind(null, { searchFieldHintText: 'Поиск...'}, this.context.MultiSelectField || {})
     return (
       <div style={{
@@ -67,7 +67,7 @@ class ItemListWithFilter extends React.Component {
           ref='itemList'
           >
           {
-            max === 1 ? (
+            !multiple ? (
               <RadioItems
                 items={ items }
                 onCheck={ onCheck }
