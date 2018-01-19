@@ -121,6 +121,8 @@ class Fias extends Component {
     }
   }
 
+  _openAddressDialog = () => this.setState({ openAddressDialog: true })
+
   _listItems = () => {
     const { addresses, houses, fetchingError, mode } = this.state
     const items = new Array()
