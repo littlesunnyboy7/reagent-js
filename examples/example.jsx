@@ -59,7 +59,7 @@ class App extends Component {
               type: 'fias',
               title: 'Адрес',
               addressesUrl: 'http://192.168.33.48:8060/lookup?lookup=',
-              housesUrl: 'http://192.168.33.48:8060/lookup/get_houses_and_obj?lookup=',
+              housesUrl: 'http://192.168.33.48:8060/lookup/houses_and_address_structure?lookup=',
               value: {
                 address: {
                   build: null,
