@@ -333,7 +333,7 @@ class Fias extends Component {
         />
         {
           isVisible && (
-            <div>
+            <div className='c-fiac__main-block'>
               <div
                 className='c-fiac__paper-background'
                 onClick={() => this._hideAddressDropdown()}
