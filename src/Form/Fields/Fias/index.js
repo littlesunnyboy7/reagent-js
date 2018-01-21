@@ -64,6 +64,7 @@ class Fias extends Component {
         } else {
           this.setState({
             addresses,
+            fetchingError: null,
             isVisible: true,
             isLoading: false
           })
@@ -90,6 +91,7 @@ class Fias extends Component {
             addrObj: json.addr_obj,
             houses: composedHouses,
             filteredHouses: composedHouses,
+            fetchingError: null,
             isVisible: true,
             isLoading: false,
             mode: MODES.SELECTING_HOUSE
@@ -228,19 +230,32 @@ class Fias extends Component {
   }
 
   _openAddressDialog = () => this.setState({ openAddressDialog: true })
+
   _closeAddressDialog = () => this.setState({ openAddressDialog: false })
+
   _handlePopupKeyUp = (e) => e.keyCode==27 && this._closeAddressDialog()
+
   _handleSubmit = (e) => {
     e.preventDefault()
+    const arr = new Array()
+
     const value = Object.keys(addressPartitionals).reduce((result, name) => {
       const { value } = e.target.elements.namedItem(name)
-      value ? result[name] = value : null
+      if (value) {
+        result[name] = value
+        arr.push(`${addressPartitionals[name]} ${value}`)
+      }
+
       return result
     },{})
 
     this.setState({
       addrObj: { ...this.state.addrObj, ...value },
-      openAddressDialog: false
+      textValue: arr.join(', '),
+      addressSubstring: arr.join(', '),
+      houseSubstring: null,
+      openAddressDialog: false,
+      isVisible: false
     })
   }
 
