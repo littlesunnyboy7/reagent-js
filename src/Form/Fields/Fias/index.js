@@ -141,7 +141,7 @@ class Fias extends Component {
 
   _ejectHouseFromAddressString = (value) => {
     const arr = value.split(',')
-    return arr[arr.length - 1] //.replace(/\s/g, '')
+    return arr[arr.length - 1]
   }
 
   _handleSwitchingToPreviousMode = (e) => {
