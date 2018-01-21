@@ -244,8 +244,21 @@ class Fias extends Component {
     })
   }
 
+  _listItemWithAddresDialogButton = () =>
+    <ListItem
+      disabled={true}
+      primaryText='Адрес отсутствует в базе ФИАС. Нажмите кнопку и введите адрес вручную'
+      rightAvatar={this._openAddressDialogButton()}
+    />
+
   _listItems = () => {
-    const { addresses, filteredHouses, fetchingError, mode } = this.state
+    const {
+      addresses,
+      filteredHouses,
+      fetchingError,
+      mode,
+      textValue
+    } = this.state
     const items = new Array()
 
     if (fetchingError) {
@@ -254,6 +267,10 @@ class Fias extends Component {
 
     switch(mode) {
       case MODES.SELECTING_ADDRESS:
+        if (addresses.length === 0 && textValue.length > 0) {
+          items.push(this._listItemWithAddresDialogButton())
+        }
+
         addresses.map((address, index) => {
           items.push(
             <ListItem
@@ -265,6 +282,10 @@ class Fias extends Component {
         })
         break
       case MODES.SELECTING_HOUSE:
+        if (filteredHouses.length === 0 && textValue.length > 0) {
+          items.push(this._listItemWithAddresDialogButton())
+        }
+
         filteredHouses.slice(0, 9).map((house, index) => {
           items.push(
             <ListItem
@@ -276,18 +297,8 @@ class Fias extends Component {
         })
         break
       default:
-        console.log('123');
         break
     }
-
-    // if (houses.length == 0) {
-      items.push(
-        <ListItem
-          disabled={true}
-          primaryText='Адрес отсутствует в базе ФИАС. Нажмите кнопку и введите адрес вручную'
-          rightAvatar={this._openAddressDialogButton()} />
-      )
-    // }
 
     return items
   }
@@ -303,7 +314,12 @@ class Fias extends Component {
 
   render() {
     const { title, required, name } = this.props;
-    const { isVisible, isLoading, addrObj, openAddressDialog } = this.state;
+    const {
+      isVisible,
+      isLoading,
+      addrObj,
+      openAddressDialog
+    } = this.state;
 
     return (
       <div>
@@ -344,7 +360,9 @@ class Fias extends Component {
                 {
                   isLoading ? (
                     <Spiner />
-                  ) : ( <List>{this._listItems()}</List> )
+                  ) : (
+                    <List>{this._listItems()}</List>
+                  )
                 }
               </Paper>
             </div>
