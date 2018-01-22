@@ -258,7 +258,7 @@ class Fias extends Component {
     })
   }
 
-  _listItemWithAddresDialogButton = () =>
+  _listItemWithAddressDialogButton = () =>
     <ListItem
       disabled={true}
       primaryText='Адрес отсутствует в базе ФИАС. Нажмите кнопку и введите адрес вручную'
@@ -282,7 +282,7 @@ class Fias extends Component {
     switch(mode) {
       case MODES.SELECTING_ADDRESS:
         if (addresses.length === 0 && textValue.length > 0) {
-          items.push(this._listItemWithAddresDialogButton())
+          items.push(this._listItemWithAddressDialogButton())
         }
 
         addresses.map((address, index) => {
@@ -297,7 +297,7 @@ class Fias extends Component {
         break
       case MODES.SELECTING_HOUSE:
         if (filteredHouses.length === 0 && textValue.length > 0) {
-          items.push(this._listItemWithAddresDialogButton())
+          items.push(this._listItemWithAddressDialogButton())
         }
 
         filteredHouses.slice(0, 9).map((house, index) => {
