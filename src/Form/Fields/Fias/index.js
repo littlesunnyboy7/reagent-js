@@ -100,7 +100,6 @@ class Fias extends Component {
       })
   }
 
-
   _handleHouseSelect = (houseObj) => {
     const { addressSubstring } = this.state
     const arr = new Array();
@@ -396,7 +395,8 @@ const addressPartitionals = {
   settlement: 'Населенный пункт',
   street: 'Улица',
   house: 'Дом',
-  building: 'Строение',
+  building: 'Корпус',
+  structure: 'Строение',
   appartment: 'Помещение'
 }
 
