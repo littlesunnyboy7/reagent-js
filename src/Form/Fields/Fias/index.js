@@ -50,10 +50,10 @@ class Fias extends Component {
   }
 
   _loadAddresses = (query) => {
-    const { addressesUrl } = this.props;
+    const { addressesUrl, headers } = this.props;
     this.setState({ isLoading: true })
 
-    fetchAddresses(addressesUrl, query)
+    fetchAddresses(addressesUrl, headers, query)
       .then(addresses => {
         if (addresses.error) {
           this.setState({
@@ -77,10 +77,10 @@ class Fias extends Component {
   }
 
   _loadHouses = (aoguid) => {
-    const { housesUrl } = this.props;
+    const { housesUrl, headers } = this.props;
     this.setState({ isLoading: true })
 
-    fetchHouses(housesUrl, aoguid)
+    fetchHouses(housesUrl, headers, aoguid)
       .then(json => {
         if (json.error) {
           this.setState({
@@ -419,7 +419,8 @@ Fias.propTypes = {
   housesUrl: PropTypes.string.isRequired,
   value: PropTypes.object,
   required: PropTypes.bool,
-  timeout: PropTypes.number
+  timeout: PropTypes.number,
+  headers: PropTypes.object
 }
 
 export default Fias;
