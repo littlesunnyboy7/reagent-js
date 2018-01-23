@@ -20,7 +20,7 @@ class Fias extends Component {
     this.state = {
       mode: MODES.SELECTING_ADDRESS,
       isLoading: false,
-      addrObj: value ? value.address : {},
+      addrObj: value || {},
       addresses: [],
       houses: [],
       textValue: value ? value.text : '',
@@ -33,7 +33,7 @@ class Fias extends Component {
     }
   }
 
-  _data = () => ({ address: this.state.addrObj, text: this.state.textValue })
+  _data = () => ({ ...this.state.addrObj, text: this.state.textValue })
 
   _hideAddressDropdown = () => this.setState({ isVisible: false })
 
@@ -62,6 +62,10 @@ class Fias extends Component {
             isLoading: false
           })
         } else {
+          if (addresses.length === 1) {
+            this._handleAddressSelect(addresses[0])
+          }
+
           this.setState({
             addresses,
             fetchingError: null,
@@ -96,6 +100,10 @@ class Fias extends Component {
             isLoading: false,
             mode: MODES.SELECTING_HOUSE
           })
+
+          if (json.houses.length === 1) {
+            this._handleHouseSelect(json.houses[0])
+          }
         }
       })
   }
@@ -105,21 +113,21 @@ class Fias extends Component {
     const arr = new Array();
 
     if (houseObj.house) {
-      arr.push(houseObj.house)
+      arr.push(`дом ${houseObj.house}`)
     }
 
     if (houseObj.building) {
-      arr.push(houseObj.building)
+      arr.push(`корпус ${houseObj.building}`)
     }
 
     if (houseObj.structure) {
-      arr.push(houseObj.structure)
+      arr.push((`строение ${houseObj.structure}`))
     }
 
     this.setState({
       houseSubstring: arr.join(''),
       addrObj: { ...this.state.addrObj, ...houseObj },
-      textValue: `${addressSubstring}${arr.join('')}, `,
+      textValue: `${addressSubstring}${arr.join('')}, кв. `,
       isVisible: false,
       mode: MODES.SELECTING_APPARTMENT
     })
@@ -133,14 +141,14 @@ class Fias extends Component {
     this.setState({
       addrObj: {
         ...this.state.addrObj,
-        appartment: arr[arr.length - 1].replace(/\s/g, '')
+        appartment: arr[arr.length - 1].trim()
       }
     })
   }
 
   _ejectHouseFromAddressString = (value) => {
     const arr = value.split(',')
-    return arr[arr.length - 1]
+    return arr[arr.length - 1].trim()
   }
 
   _handleSwitchingToPreviousMode = (e) => {
@@ -163,8 +171,11 @@ class Fias extends Component {
   }
 
   _handleChange = (e) => {
+    const { timeout } = this.props
     const { mode } = this.state
     const value = e.target.value
+
+    clearTimeout(this.AddressRequestTimeout)
 
     this._handleSwitchingToPreviousMode(e)
 
@@ -178,7 +189,7 @@ class Fias extends Component {
         this._ejectAppartmentFromAddressString(value)
         break
       default:
-        this._loadAddresses(value)
+        this.AddressRequestTimeout = setTimeout(this._loadAddresses, timeout || 1000, value)
         break
     }
   }
@@ -317,14 +328,15 @@ class Fias extends Component {
     return items
   }
 
-  _openAddressDialogButton = () => (<FloatingActionButton
-    mini={true}
-    onClick={this._openAddressDialog}
-    secondary={true}
-    tabIndex={-1}
+  _openAddressDialogButton = () =>
+    (<FloatingActionButton
+      mini={true}
+      onClick={this._openAddressDialog}
+      secondary={true}
+      tabIndex={-1}
     >
-    <SocialLocationCity/>
-  </FloatingActionButton>)
+      <SocialLocationCity/>
+    </FloatingActionButton>)
 
   render() {
     const { title, required, name } = this.props;
@@ -406,7 +418,8 @@ Fias.propTypes = {
   addressesUrl: PropTypes.string.isRequired,
   housesUrl: PropTypes.string.isRequired,
   value: PropTypes.object,
-  required: PropTypes.bool
+  required: PropTypes.bool,
+  timeout: PropTypes.number
 }
 
 export default Fias;
