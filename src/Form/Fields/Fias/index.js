@@ -306,10 +306,6 @@ class Fias extends Component {
 
     switch(mode) {
       case MODES.SELECTING_ADDRESS:
-        if (addresses.length === 0 && textValue.length > 0) {
-          items.push(this._listItemWithAddressDialogButton())
-        }
-
         addresses.map((address, index) => {
           items.push(
             <ListItem
