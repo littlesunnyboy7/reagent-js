@@ -35,7 +35,7 @@ class Fias extends Component {
 
   _prepareDefaultValue = (value) => {
     const arr = new Array()
-    let addrParts = addressPartitionals
+    let addrParts = { ...addressPartitionals }
     delete addrParts.zip
 
     Object.keys(addrParts).map(k => {
@@ -133,7 +133,7 @@ class Fias extends Component {
     }
 
     if (houseObj.structure) {
-      arr.push((`строение ${houseObj.structure}`))
+      arr.push(`строение ${houseObj.structure}`)
     }
 
     this.setState({
@@ -263,8 +263,10 @@ class Fias extends Component {
 
     const value = Object.keys(addressPartitionals).reduce((result, name) => {
       const { value } = e.target.elements.namedItem(name)
+
+      result[name] = value ? value : null
+
       if (value) {
-        result[name] = value
         arr.push(`${addressPartitionals[name]} ${value}`)
       }
 
@@ -304,10 +306,6 @@ class Fias extends Component {
 
     switch(mode) {
       case MODES.SELECTING_ADDRESS:
-        if (addresses.length === 0 && textValue.length > 0) {
-          items.push(this._listItemWithAddressDialogButton())
-        }
-
         addresses.map((address, index) => {
           items.push(
             <ListItem
@@ -365,12 +363,13 @@ class Fias extends Component {
           key={name}
           type='hidden'
           name={name}
-          value={JSON.stringify(this.state.addrObj)}
+          value={JSON.stringify(addrObj)}
         />
         <AddressDialog
           open={openAddressDialog}
           title={title}
           value={addrObj}
+          disablingNotEmptyFields={true}
           addressPartitionals={addressPartitionals}
           onClose={this._closeAddressDialog}
           onSubmit={ this._handleSubmit }
